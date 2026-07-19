@@ -310,9 +310,14 @@ Output raw JSON only. Do not wrap in markdown or backticks.
 
 def call_openai_api(transcript: str, api_key: str) -> dict:
     from openai import OpenAI
-    client = OpenAI(api_key=api_key)
+    if api_key.startswith("gsk_"):
+        client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
+        model = "llama-3.1-70b-versatile"
+    else:
+        client = OpenAI(api_key=api_key)
+        model = "gpt-4o"
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=model,
         messages=[
             {"role": "system", "content": OPENAI_SYSTEM_PROMPT},
             {"role": "user", "content": transcript}
