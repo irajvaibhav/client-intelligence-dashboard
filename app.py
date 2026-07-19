@@ -71,7 +71,6 @@ class ClientIntelligence(BaseModel):
 
 class AnalysisRequest(BaseModel):
     transcript: str
-    api_key: Optional[str] = None
 
 MOCK_INTELLIGENCE = {
     "client_name": "Priya Sharma",
@@ -320,16 +319,14 @@ Structure requirements:
 Output raw JSON only. Do not wrap in markdown or backticks.
 """
 
-def call_openai_api(transcript: str, api_key: str) -> dict:
+def call_groq_api(transcript: str, api_key: str) -> dict:
     from openai import OpenAI
-    if api_key.startswith("gsk_"):
-        client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
-        model = "llama-3.1-70b-versatile"
-    else:
-        client = OpenAI(api_key=api_key)
-        model = "gpt-4o"
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://api.groq.com/openai/v1"
+    )
     response = client.chat.completions.create(
-        model=model,
+        model="llama-3.1-70b-versatile",
         messages=[
             {"role": "system", "content": OPENAI_SYSTEM_PROMPT},
             {"role": "user", "content": transcript}
@@ -340,13 +337,13 @@ def call_openai_api(transcript: str, api_key: str) -> dict:
 
 @app.post("/api/analyze")
 def analyze_conversation(request: AnalysisRequest):
-    api_key = request.api_key or os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key or api_key.strip() == "":
         return MOCK_INTELLIGENCE
     try:
-        return call_openai_api(request.transcript, api_key)
+        return call_groq_api(request.transcript, api_key)
     except Exception as e:
-        print("Error during API execution:", str(e))
+        print("Error during Groq API execution:", str(e))
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/")
