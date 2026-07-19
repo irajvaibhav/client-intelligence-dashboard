@@ -226,12 +226,13 @@ function sendAnalysisRequest() {
       api_key: apiKeyText || null
     })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.error) {
-      console.warn(data.error);
+  .then(res => {
+    if (!res.ok) {
+      return res.json().then(err => { throw new Error(err.detail || "Server error"); });
     }
-    
+    return res.json();
+  })
+  .then(data => {
     fill.style.width = "70%";
     logApi.className = "log-item done";
     logApi.innerHTML = '<i class="fa-solid fa-circle-check"></i> Analysis Received';
@@ -267,7 +268,7 @@ function sendAnalysisRequest() {
   })
   .catch(err => {
     loader.classList.add("hidden");
-    alert("Analysis failed. Please check backend connection.");
+    alert("Analysis failed: " + err.message);
     console.error(err);
   });
 }

@@ -324,12 +324,13 @@ def call_openai_api(transcript: str, api_key: str) -> dict:
 @app.post("/api/analyze")
 def analyze_conversation(request: AnalysisRequest):
     api_key = request.api_key or os.getenv("OPENAI_API_KEY")
-    if not api_key:
+    if not api_key or api_key.strip() == "":
         return MOCK_INTELLIGENCE
     try:
         return call_openai_api(request.transcript, api_key)
     except Exception as e:
-        return MOCK_INTELLIGENCE
+        print("Error during API execution:", str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/")
 def read_index():
