@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitFlow - Client Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                    <div class="logo-text">
+                        <span class="brand-main">FitFlow</span>
+                        <span class="brand-sub">Analytics</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="workspace">
+                    <i class="fa-solid fa-keyboard"></i> Input Workspace
+                </a>
+                <a href="#" class="nav-item disabled" data-tab="dashboard" id="nav-dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </a>
+
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="user-info">
+                        <span class="name">Coach Portal</span>
+                        <span class="role">Lead Health Analyst</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <section id="tab-workspace" class="tab-pane active">
+                <div class="welcome-header">
+                    <h1>Analyze Client Conversation</h1>
+                    <p>Paste your chat logs to automatically generate actionable client intelligence, stress flags, nutrition adherence, and evidence-supported insights.</p>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-card">
+                        <div class="card-header-simple">
+                            <h3><i class="fa-regular fa-comment-dots"></i> Chat Transcript</h3>
+                            <button id="btn-load-sample" class="btn btn-secondary btn-sm">Load Default 8-Day Conversation</button>
+                        </div>
+                        <div class="card-body">
+                            <textarea id="tx-transcript" placeholder="Paste the coach-client chat transcripts here..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="options-card">
+                        <div class="card-header-simple">
+                            <h3><i class="fa-solid fa-bolt"></i> Analysis Control</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="run-section" style="margin-bottom: 20px;">
+                                <button id="btn-analyze" class="btn btn-primary btn-lg btn-block">
+                                    <i class="fa-solid fa-bolt"></i> Generate Client Intelligence
+                                </button>
+                            </div>
+
+                            <div id="analysis-loader" class="loader-container hidden">
+                                <div class="spinner"></div>
+                                <div class="loader-status">
+                                    <p class="loader-title">Analyzing Conversation...</p>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <ul class="loader-logs">
+                                        <li class="log-item done"><i class="fa-solid fa-circle-check"></i> Reading transcript blocks...</li>
+                                        <li class="log-item" id="log-api"><i class="fa-regular fa-circle"></i> Calling OpenAI GPT API...</li>
+                                        <li class="log-item" id="log-parse"><i class="fa-regular fa-circle"></i> Parsing structured JSON schema...</li>
+                                        <li class="log-item" id="log-evidence"><i class="fa-regular fa-circle"></i> Cross-referencing quotes & classifications...</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-dashboard" class="tab-pane">
+                <div class="dashboard-header">
+                    <div class="client-meta">
+                        <div class="client-badge-avatar">PS</div>
+                        <div class="client-details">
+                            <h2>Priya Sharma <span class="badge badge-warning">Needs Attention</span></h2>
+                            <p class="client-sub">34 yrs | School Teacher | Goal: Fat Loss & Routine Structure</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-actions">
+                        <button class="btn btn-secondary" id="btn-reanalyze"><i class="fa-solid fa-arrow-left"></i> Back to Input</button>
+                        <button class="btn btn-primary" id="btn-export-json"><i class="fa-solid fa-file-export"></i> Export JSON Intelligence</button>
+                    </div>
+                </div>
+
+                <div class="metrics-strip">
+                    <div class="metric-mini-card">
+                        <span class="label">Avg Sleep</span>
+                        <span class="value" id="mini-sleep">5.8 hrs <i class="fa-solid fa-bed icon-deficit"></i></span>
+                        <span class="subtext">Below Target (7-8h)</span>
+                    </div>
+                    <div class="metric-mini-card">
+                        <span class="label">Avg Daily Steps</span>
+                        <span class="value" id="mini-steps">7,333 <i class="fa-solid fa-shoe-prints icon-ok"></i></span>
+                        <span class="subtext">Moderately Active</span>
+                    </div>
+                    <div class="metric-mini-card">
+                        <span class="label">Acidity / Bloating</span>
+                        <span class="value text-warning" id="mini-symptoms">Frequent <i class="fa-solid fa-triangle-exclamation"></i></span>
+                        <span class="subtext">Day 1, 2, 6, 8</span>
+                    </div>
+                    <div class="metric-mini-card">
+                        <span class="label">Engagement Level</span>
+                        <span class="value text-success" id="mini-engagement">High <i class="fa-solid fa-circle-check"></i></span>
+                        <span class="subtext">8/8 Days Updated</span>
+                    </div>
+                </div>
+
+                <div class="legend-bar">
+                    <span class="legend-title">Fact-Checking Hierarchy:</span>
+                    <span class="legend-pill confirmed"><span class="dot"></span> Confirmed Fact</span>
+                    <span class="legend-pill reported"><span class="dot"></span> Client-Reported</span>
+                    <span class="legend-pill inference"><span class="dot"></span> AI Inference</span>
+                    <span class="legend-pill missing"><span class="dot"></span> Missing / Unavailable</span>
+                </div>
+
+                <div class="dashboard-grid">
+                    
+                    <div class="dashboard-col col-main">
+                        
+                        <div class="intel-card" id="card-weekly-summary">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-rectangle-list"></i>
+                                    <h3>Weekly Client Summary</h3>
+                                </div>
+                                <div class="review-actions" data-target="weekly_summary">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="text-weekly-summary" class="editable-content"></p>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-nutrition">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-carrot"></i>
+                                    <h3>Nutrition Adherence</h3>
+                                    <span class="status-badge" id="badge-nutrition">Suboptimal</span>
+                                </div>
+                                <div class="review-actions" data-target="nutrition">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="desc-nutrition" class="editable-content summary-text"></p>
+                                <ul class="findings-list" id="list-nutrition"></ul>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-sleep">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-moon"></i>
+                                    <h3>Sleep Adherence</h3>
+                                    <span class="status-badge" id="badge-sleep">Deficient</span>
+                                </div>
+                                <div class="review-actions" data-target="sleep">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="desc-sleep" class="editable-content summary-text"></p>
+                                <ul class="findings-list" id="list-sleep"></ul>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-symptoms">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-house-medical-flag"></i>
+                                    <h3>Symptoms & Stress</h3>
+                                    <span class="status-badge" id="badge-symptoms">Elevated</span>
+                                </div>
+                                <div class="review-actions" data-target="symptoms_stress">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="desc-symptoms" class="editable-content summary-text"></p>
+                                <ul class="findings-list" id="list-symptoms"></ul>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-exercise">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-person-running"></i>
+                                    <h3>Exercise & Steps</h3>
+                                    <span class="status-badge" id="badge-exercise">Active</span>
+                                </div>
+                                <div class="review-actions" data-target="exercise_steps">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="desc-exercise" class="editable-content summary-text"></p>
+                                <ul class="findings-list" id="list-exercise"></ul>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-water">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-glass-water"></i>
+                                    <h3>Water Intake</h3>
+                                    <span class="status-badge" id="badge-water">Incomplete tracking</span>
+                                </div>
+                                <div class="review-actions" data-target="water">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p id="desc-water" class="editable-content summary-text"></p>
+                                <ul class="findings-list" id="list-water"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-col col-sidebar">
+                        
+                        <div class="intel-card risk-panel" id="card-risk-flags">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <h3>Risk & Attention Flags</h3>
+                                </div>
+                                <div class="review-actions" data-target="risk_flags">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="list-risk-flags"></div>
+                            </div>
+                        </div>
+
+                        <div class="intel-card actions-panel" id="card-recommended-actions">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-briefcase-medical"></i>
+                                    <h3>Recommended Coach Actions</h3>
+                                </div>
+                                <div class="review-actions" data-target="recommended_next_actions">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="actions-list" id="list-recommended-actions"></ul>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-barriers">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-ban"></i>
+                                    <h3>Key Barriers</h3>
+                                </div>
+                                <div class="review-actions" data-target="key_barriers">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="list-barriers"></div>
+                            </div>
+                        </div>
+
+                        <div class="intel-card" id="card-pending-actions">
+                            <div class="card-header">
+                                <div class="title-section">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <h3>Pending Action Items</h3>
+                                </div>
+                                <div class="review-actions" data-target="pending_actions">
+                                    <button class="action-btn approve" title="Approve"><i class="fa-solid fa-check"></i></button>
+                                    <button class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="action-btn reject" title="Reject"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="list-pending-actions"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="status-floating-bar" id="review-bar">
+                    <span class="bar-message"><i class="fa-solid fa-user-pen"></i> Human Review: <strong id="approved-count">0</strong> approved, <strong id="edited-count">0</strong> edited, <strong id="rejected-count">0</strong> rejected.</span>
+                    <button class="btn btn-primary" id="btn-floating-export"><i class="fa-solid fa-file-circle-check"></i> Export Approved Report</button>
+                </div>
+            </section>
+
+
+
+        </main>
+        
+        <aside class="evidence-drawer hidden" id="evidence-drawer">
+            <div class="drawer-header">
+                <h3><i class="fa-solid fa-receipt"></i> Supporting Evidence</h3>
+                <button id="btn-close-drawer" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="drawer-meta">
+                <span class="highlight-info">Highlighting conversation context for: <strong id="highlight-source">None</strong></span>
+            </div>
+            <div class="drawer-body" id="drawer-transcript-view">
+            </div>
+        </aside>
+
+        <div class="modal-overlay hidden" id="edit-modal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Edit Finding</h3>
+                    <button class="btn-icon" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modal-target-card">
+                    <div class="form-group">
+                        <label for="modal-input-title">Details</label>
+                        <textarea id="modal-input-text" rows="8"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+                    <button class="btn btn-primary" id="btn-modal-save">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
