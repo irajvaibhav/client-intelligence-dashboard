@@ -53,6 +53,10 @@ class NextAction(BaseModel):
     priority: str
 
 class ClientIntelligence(BaseModel):
+    client_name: str
+    client_age: Optional[str] = None
+    client_occupation: Optional[str] = None
+    client_goal: Optional[str] = None
     weekly_summary: str
     engagement_level: FactTypeItem
     nutrition: MetricAdherence
@@ -70,6 +74,10 @@ class AnalysisRequest(BaseModel):
     api_key: Optional[str] = None
 
 MOCK_INTELLIGENCE = {
+    "client_name": "Priya Sharma",
+    "client_age": "34 yrs",
+    "client_occupation": "School Teacher",
+    "client_goal": "Fat Loss & Routine Structure",
     "weekly_summary": "Priya Sharma is a school teacher navigating high work pressure (office politics, hectic schedule) alongside her family commitments (daughter's exams). While she demonstrates high initial commitment and positive attitude, her routine collapses under the weight of school mornings and office stress, leading to extreme sleep deprivation (averaging ~5.8 hours, falling asleep at a meeting) and digestive symptoms (acidity, bloating). She experiences frustration over weight fluctuations despite reduced food intake, showing a critical need for education on stress-induced bloating and basic metabolic health.",
     "engagement_level": {
         "value": "High",
@@ -283,7 +291,7 @@ MOCK_INTELLIGENCE = {
 }
 
 OPENAI_SYSTEM_PROMPT = """
-You are an expert Health and Fitness Coach AI. 
+You are an expert Health and Fitness Coach. 
 Analyze the coach-client chat history and return a structured JSON object containing client intelligence.
 
 Classify every single finding into one of:
@@ -293,17 +301,21 @@ Classify every single finding into one of:
 - "Missing/Unavailable"
 
 Structure requirements:
-1. weekly_summary: Overall synthesis.
-2. engagement_level: {value: str, fact_type: str, evidence: [{text, day}]}
-3. nutrition: {status, details, data_points: [{value, fact_type, evidence}]}
-4. exercise_steps: {status, details, data_points}
-5. sleep: {status, details, data_points}
-6. water: {status, details, data_points}
-7. symptoms_stress: {status, details, data_points}
-8. key_barriers: [{barrier, details, evidence}]
-9. pending_actions: [{action, assignee, status, evidence}]
-10. risk_flags: [{flag, severity, details, evidence}]
-11. recommended_next_actions: [{action, rationale, priority}]
+1. client_name: Extract the client's full name. If not explicitly mentioned, make a guess or use 'Unknown'.
+2. client_age: Extract age (e.g. '34 yrs') or leave empty if unknown.
+3. client_occupation: Extract occupation (e.g. 'School Teacher') or leave empty.
+4. client_goal: Extract primary goal (e.g. 'Fat Loss') or leave empty.
+5. weekly_summary: Overall synthesis.
+6. engagement_level: {value: str, fact_type: str, evidence: [{text, day}]}
+7. nutrition: {status, details, data_points: [{value, fact_type, evidence}]}
+8. exercise_steps: {status, details, data_points}
+9. sleep: {status, details, data_points}
+10. water: {status, details, data_points}
+11. symptoms_stress: {status, details, data_points}
+12. key_barriers: [{barrier, details, evidence}]
+13. pending_actions: [{action, assignee, status, evidence}]
+14. risk_flags: [{flag, severity, details, evidence}]
+15. recommended_next_actions: [{action, rationale, priority}]
 
 Output raw JSON only. Do not wrap in markdown or backticks.
 """

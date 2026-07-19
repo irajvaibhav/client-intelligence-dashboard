@@ -280,6 +280,16 @@ function resetReviewStates() {
 }
 
 function populateDashboard(data) {
+  if (data.client_name) {
+    document.getElementById("client-name").innerHTML = `${data.client_name} <span class="badge badge-warning">Needs Attention</span>`;
+    const subParts = [];
+    if (data.client_age) subParts.push(data.client_age);
+    if (data.client_occupation) subParts.push(data.client_occupation);
+    if (data.client_goal) subParts.push(`Goal: ${data.client_goal}`);
+    document.getElementById("client-sub").textContent = subParts.join(" | ");
+    const initials = data.client_name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
+    document.getElementById("client-avatar").textContent = initials || "CL";
+  }
   document.getElementById("text-weekly-summary").textContent = data.weekly_summary;
   reviewStates.weekly_summary.value = data.weekly_summary;
   
