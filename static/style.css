@@ -625,15 +625,21 @@ textarea:focus {
 
 .intel-card.approved {
     border-left: 4px solid var(--success);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), var(--bg-card));
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 .intel-card.edited {
     border-left: 4px solid var(--primary);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), var(--bg-card));
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 .intel-card.rejected {
     border-left: 4px solid var(--danger);
-    opacity: 0.6;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), var(--bg-card));
+    border-color: rgba(239, 68, 68, 0.3);
+    opacity: 0.7;
 }
 
 .intel-card .card-header {
@@ -676,40 +682,62 @@ textarea:focus {
 }
 
 .action-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
     border: 1px solid var(--border-color);
-    background: none;
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    transition: all 0.15s ease;
+    font-size: 12px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .action-btn:hover {
     color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.action-btn.approve:hover {
+    color: var(--success);
+    border-color: var(--success);
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+.action-btn.edit:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: rgba(99, 102, 241, 0.15);
+}
+
+.action-btn.reject:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+    background-color: rgba(239, 68, 68, 0.15);
 }
 
 .action-btn.approve.active {
-    background-color: var(--success);
-    color: white;
-    border-color: var(--success);
+    background-color: var(--success) !important;
+    color: white !important;
+    border-color: var(--success) !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
 }
 
 .action-btn.edit.active {
-    background-color: var(--primary);
-    color: white;
-    border-color: var(--primary);
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
 }
 
 .action-btn.reject.active {
-    background-color: var(--danger);
-    color: white;
-    border-color: var(--danger);
+    background-color: var(--danger) !important;
+    color: white !important;
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
 }
 
 .editable-content {

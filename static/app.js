@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavigation();
   initWorkspace();
   initModal();
+  initReviewButtons();
   
   document.getElementById("btn-close-drawer").addEventListener("click", () => {
     document.getElementById("evidence-drawer").classList.add("hidden");
@@ -590,16 +591,40 @@ function initReviewButtons() {
   
   reviewGroups.forEach(group => {
     const target = group.getAttribute("data-target");
-    const approveBtn = group.querySelector(".approve");
-    const editBtn = group.querySelector(".edit");
-    const rejectBtn = group.querySelector(".reject");
+    let approveBtn = group.querySelector(".approve");
+    let editBtn = group.querySelector(".edit");
+    let rejectBtn = group.querySelector(".reject");
     const parentCard = group.closest(".intel-card");
     
-    approveBtn.className = "action-btn approve";
-    editBtn.className = "action-btn edit";
-    rejectBtn.className = "action-btn reject";
+    if (!approveBtn || !editBtn || !rejectBtn || !parentCard) return;
     
-    approveBtn.addEventListener("click", () => {
+    const newApprove = approveBtn.cloneNode(true);
+    const newEdit = editBtn.cloneNode(true);
+    const newReject = rejectBtn.cloneNode(true);
+    
+    approveBtn.parentNode.replaceChild(newApprove, approveBtn);
+    editBtn.parentNode.replaceChild(newEdit, editBtn);
+    rejectBtn.parentNode.replaceChild(newReject, rejectBtn);
+    
+    approveBtn = newApprove;
+    editBtn = newEdit;
+    rejectBtn = newReject;
+    
+    const currentState = (reviewStates[target] && reviewStates[target].state) ? reviewStates[target].state : "pending";
+    approveBtn.classList.toggle("active", currentState === "approved");
+    editBtn.classList.toggle("active", currentState === "edited");
+    rejectBtn.classList.toggle("active", currentState === "rejected");
+    
+    if (currentState === "approved") parentCard.className = "intel-card approved";
+    else if (currentState === "edited") parentCard.className = "intel-card edited";
+    else if (currentState === "rejected") parentCard.className = "intel-card rejected";
+    else parentCard.className = "intel-card";
+    
+    approveBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!reviewStates[target]) reviewStates[target] = { state: "pending", value: "" };
+      
       if (reviewStates[target].state === "approved") {
         reviewStates[target].state = "pending";
         parentCard.className = "intel-card";
@@ -614,11 +639,17 @@ function initReviewButtons() {
       updateReviewBar();
     });
     
-    editBtn.addEventListener("click", () => {
+    editBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       openEditModal(target);
     });
     
-    rejectBtn.addEventListener("click", () => {
+    rejectBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!reviewStates[target]) reviewStates[target] = { state: "pending", value: "" };
+      
       if (reviewStates[target].state === "rejected") {
         reviewStates[target].state = "pending";
         parentCard.className = "intel-card";
